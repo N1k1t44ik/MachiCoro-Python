@@ -7,7 +7,7 @@ import os
 from time import sleep as s
 import keyboard as key
 
-ver = 'Alpha 3'
+ver = 'Alpha 4'
 print('version : ' + ver + '\n')
 
 logs = open('logs.txt', 'w')
@@ -26,108 +26,113 @@ winid = 0
 Range = 0
 firstDrop = True
 firstStep = True
-DropCubeType = ''
+DropCubeType = 'd'
 
 class Game():
-    def field(cards, Interface):
-        if Interface == 'Player':
-            for i in range(len(cards)):
-                if cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
-                    print('- ' + cards[(i - 1) * -1].name + '(' + str(cards[(i - 1) * -1].num) + ') x' + str(
-                        cards[(i - 1) * -1].count))
-                if not cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
-                    print('- ' + cards[(i - 1) * -1].name + '(' + str(cards[(i - 1) * -1].num) + '-' + str(
-                        cards[(i - 1) * -1].dNum) + ') x' + str(cards[(i - 1) * -1].count))
-        if Interface == 'Allowed':
-            for i in range(len(cards)):
-                print(str(i + 1) + ' ' + cards[i - 1].name + ' - ' + str(cards[i - 1].cost))
+	def field(cards, Interface):
+		if Interface == 'Player':
+			for i in range(len(cards)):
+				if cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
+					print('- ' + cards[(i - 1) * -1].name + '(' + str(cards[(i - 1) * -1].num) + ') x' + str(
+						cards[(i - 1) * -1].count))
+				if not cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
+					print('- ' + cards[(i - 1) * -1].name + '(' + str(cards[(i - 1) * -1].num) + '-' + str(
+						cards[(i - 1) * -1].dNum) + ') x' + str(cards[(i - 1) * -1].count))
+		if Interface == 'Allowed':
+			for i in range(len(cards)):
+				print(str(i + 1) + ' ' + cards[i - 1].name + ' - ' + str(cards[i - 1].cost))
 
-    def coinsTransform(count):
-        coinsText = ''
-        values = [[1, 21, 31, 41, 51, 61, 71, 81, 91, 101, 121],
-                  [3, 4, 23, 24, 33, 34, 43, 44, 53, 54, 63, 64, 73, 74, 83, 84, 93, 94, 103, 103, 123, 124]]
-        for i in range(len(values[0])):
-            if count == values[0][i - 1]:
-                coinsText = ' монета'
-        for i in range(len(values[1])):
-            if count == values[1][i - 1]:
-                coinsText = ' монеты'
-        return coinsText
+	def coinsTransform(count):
+		coinsText = ''
+		values = [[1, 21, 31, 41, 51, 61, 71, 81, 91, 101, 121], [3, 4, 23, 24, 33, 34, 43, 44, 53, 54, 63, 64, 73, 74, 83, 84, 93, 94, 103, 103, 123, 124]]
+		worked = False
+		for i in range(len(values[0])):
+			if count == values[0][i - 1]:
+				coinsText = ' монета'
+				worked = True
+		for i in range(len(values[1])):
+			if count == values[1][i - 1]:
+				coinsText = ' монеты'
+				worked = True
+		if not worked:
+			coinsText = ' монет'
 
-    def addCard(player, name, count):
-        haveCard = False
+		return coinsText
 
-        for i in range(len(player.cards)):
-            if player.cards[i - 1].name == name:
-                haveCard = True
-            # print('hc set true  ' + name + '  ' + player.cards[i-1].name)
+	def addCard(player, name, count):
+		haveCard = False
 
-        if haveCard:
-            for i in range(len(player.cards)):
-                if player.cards[i - 1].name == name:
-                    player.cards[i - 1].count += count
+		for i in range(len(player.cards)):
+			if player.cards[i - 1].name == name:
+				haveCard = True
+			# print('hc set true  ' + name + '  ' + player.cards[i-1].name)
 
-        if not haveCard:
-            if name == 'wheat field':
-                player.cards.append(Card(cost=1, type='wheat', color='blue', num=1, gift=1, name=name, dNum=1, count=1))
-            if name == 'bakery':
-                player.cards.append(
-                    Card(cost=1, type='clothes', color='green', num=2, gift=1, name=name, dNum=3, count=1))
-            if name == 'apple garden':
-                player.cards.append(
-                    Card(cost=3, type='wheat', color='blue', num=10, gift=3, name=name, dNum=10, count=1))
-            if name == 'mine':
-                player.cards.append(Card(cost=6, type='gear', color='blue', num=9, gift=5, name=name, dNum=9, count=1))
-            if name == 'forest':
-                player.cards.append(Card(cost=3, type='gear', color='blue', num=5, gift=1, name=name, dNum=5, count=1))
-            if name == 'farm':
-                player.cards.append(Card(cost=1, type='pig', color='blue', num=2, gift=1, name=name, dNum=2, count=1))
-            if name == 'shop':
-                player.cards.append(
-                    Card(cost=2, type='clothes', color='green', num=4, gift=3, name=name, dNum=4, count=1))
-            if name == 'furniture factory':
-                player.cards.append(
-                    Card(cost=3, type='factory', color='green', num=8, gift=3, name=name, dNum=8, count=1))
-            if name == 'cheese factory':
-                player.cards.append(
-                    Card(cost=5, type='factory', color='green', num=7, gift=5, name=name, dNum=7, count=1))
-            if name == 'fruit market':
-                player.cards.append(
-                    Card(cost=2, type='apple', color='green', num=11, gift=2, name=name, dNum=12, count=1))
+		if haveCard:
+			for i in range(len(player.cards)):
+				if player.cards[i - 1].name == name:
+					player.cards[i - 1].count += count
 
-    def buyCard(Player, allowedCards):
-        global autodrop
-        ans = input('\nВыберите действие:\n1 - купить карту\n2 - пропустить ход\n')
+		if not haveCard:
+			if name == 'wheat field':
+				player.cards.append(Card(cost=1, type='wheat', color='blue', num=1, gift=1, name=name, dNum=1, count=1))
+			if name == 'bakery':
+				player.cards.append(
+					Card(cost=1, type='clothes', color='green', num=2, gift=1, name=name, dNum=3, count=1))
+			if name == 'apple garden':
+				player.cards.append(
+					Card(cost=3, type='wheat', color='blue', num=10, gift=3, name=name, dNum=10, count=1))
+			if name == 'mine':
+				player.cards.append(Card(cost=6, type='gear', color='blue', num=9, gift=5, name=name, dNum=9, count=1))
+			if name == 'forest':
+				player.cards.append(Card(cost=3, type='gear', color='blue', num=5, gift=1, name=name, dNum=5, count=1))
+			if name == 'farm':
+				player.cards.append(Card(cost=1, type='pig', color='blue', num=2, gift=1, name=name, dNum=2, count=1))
+			if name == 'shop':
+				player.cards.append(
+					Card(cost=2, type='clothes', color='green', num=4, gift=3, name=name, dNum=4, count=1))
+			if name == 'furniture factory':
+				player.cards.append(
+					Card(cost=3, type='factory', color='green', num=8, gift=3, name=name, dNum=8, count=1))
+			if name == 'cheese factory':
+				player.cards.append(
+					Card(cost=5, type='factory', color='green', num=7, gift=5, name=name, dNum=7, count=1))
+			if name == 'fruit market':
+				player.cards.append(
+					Card(cost=2, type='apple', color='green', num=11, gift=2, name=name, dNum=12, count=1))
 
-        if ans == '1':
-            cardnum = int(input('Введите номер карты: '))
-            reversedAC = list(reversed(allowedCards))
-            if not cardnum == 1:
-                Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
-                Player.balance -= reversedAC[(cardnum - 1) * -1].cost
-                cost = reversedAC[(cardnum - 1) * -1].cost
-                print('Игрок ' + Player.name + ' покупает ' + reversedAC[(cardnum - 1) * -1].name + ' и тратит ' + str(
-                    cost) + Game.coinsTransform(cost))
-            if cardnum == 1:
-                Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
-                Player.balance -= allowedCards[(cardnum - 2)].cost
-                cost = allowedCards[(cardnum - 2)].cost
-                print('Игрок ' + Player.name + ' покупает ' + allowedCards[(cardnum - 2)].name + ' и тратит ' + str(
-                    cost) + Game.coinsTransform(cost))
-        # print(allowedCards[cardnum*-1].name + '  ' + str(cardnum))
+	def buyCard(Player, allowedCards):
+		global autodrop
+		ans = input('\nВыберите действие:\n1 - купить карту\n2 - пропустить ход\n')
 
-    def dropCube(type):
-        CubeNum = 0
-        if not type == 'd':
-            CubeNum = ran.randint(1, 6)
-        else:
-            CubeNum = int(input())
-        return CubeNum
+		if ans == '1':
+			cardnum = int(input('Введите номер карты: '))
+			reversedAC = list(reversed(allowedCards))
+			if not cardnum == 1:
+				Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
+				Player.balance -= reversedAC[(cardnum - 1) * -1].cost
+				cost = reversedAC[(cardnum - 1) * -1].cost
+				print('Игрок ' + Player.name + ' покупает ' + reversedAC[(cardnum - 1) * -1].name + ' и у него -' + str(
+					cost) + Game.coinsTransform(cost))
+			if cardnum == 1:
+				Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
+				Player.balance -= allowedCards[(cardnum - 2)].cost
+				cost = allowedCards[(cardnum - 2)].cost
+				print('Игрок ' + Player.name + ' покупает ' + allowedCards[(cardnum - 2)].name + ' и у него -' + str(
+					cost) + Game.coinsTransform(cost))
+		# print(allowedCards[cardnum*-1].name + '  ' + str(cardnum))
 
-    def arrayToString(massive):
-        ret = ''
-        ret = str(massive).replace('[', '').replace(']', '').replace(',', '')
-        return ret
+	def dropCube(type):
+		CubeNum = 0
+		if not type == 'd':
+			CubeNum = ran.randint(1, 6)
+		else:
+			CubeNum = int(input())
+		return CubeNum
+
+	def arrayToString(massive):
+		ret = ''
+		ret = str(massive).replace('[', '').replace(']', '').replace(',', '')
+		return ret
 
 def cc():
 	os.system('cls')
@@ -148,6 +153,7 @@ def setupCards():
 	gameAddCard(3, 'factory', 'green', 8, 3, 'furniture factory', 8, 6)
 	gameAddCard(5, 'factory', 'green', 7, 3, 'cheese factory', 7, 6)
 	gameAddCard(2, 'factory', 'green', 11, 2, 'fruit market', 12, 6)
+
 
 def enterPlayer():
 	global ID
@@ -211,11 +217,6 @@ def enterPlayer():
 		#print('Игрок ' + win + ' победил в жеребъёвке и бросает кубик первым!')
 		lt += '\nCalculate first player: name:' + win + ' id:' + str(winid) + '  --id'
 		writeLogs()
-		#ids.remove(winid)
-		# while winid in PlayersQueue:
-		# 	PlayersQueue.remove(winid)
-		# for i in range(len(ids)-1):
-		# 	PlayersQueue.append(ids[i-1])
 
 
 def gameAddCard(cost, type, color, num, gift, name, dNum, count):
@@ -252,27 +253,20 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO переделать
+#TODO доделать
 def findCard(Player):
 		global CubeNum
 		global Players
 		global lt
-		global firstDrop
-		for u in range(len(Players)):
-			if Players[u-1].step:
-				Cards = Player.cards
-				for i in range(len(Cards)):
-					if (CubeNum >= Cards[i-1].num and CubeNum <= Cards[i-1].dNum) or CubeNum == Cards[i-1].num:
-						lt += '\n --Card used-- Card: ' + str(Cards[i-1])
-						writeLogs()
-						l = Card.CardFun(Players, Cards[i-1], Player, firstDrop)
-						if firstDrop:
-							l-=1
-							firstDrop = False
-						Player.balance = l
-						if not Player.balance == l:
-							l = l - Player.balance
-							print('Игрок ' + Player.name + ' получает ' + str(l) + Game.coinsTransform((l)))
+		for i in range(len(Player.cards)):
+			Cards = Player.cards
+			if CubeNum >= Cards[i-1].num and CubeNum <= Cards[i-1].dNum:
+				lt += '\n --Card used-- Card: ' + str(Cards[i-1])
+				writeLogs()
+				addBalance = Card.CardFun(Players, Cards[i - 1], Player, curentQueue, PlayersQueue)
+				Player.balance += addBalance
+				if not addBalance == 0:
+					print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
 
 def checkCard(name):
 	ret = True
@@ -303,15 +297,17 @@ while True:
 	for i in range(len(PlayersQueue)):
 
 		# Бросок кубика
-		CubeNum = Game.dropCube('')
+		#TODO баг с пустым экраном
+		CubeNum = Game.dropCube(DropCubeType)
+		print(CubeNum)
 
 		# Проверка является ли игрок ведущим
 		if Players[i-1].id == PlayersQueue[curentQueue-1]:
-			print(curentQueue)
-			print(Players[PlayersQueue[curentQueue - 1]].name)
-			print(PlayersQueue)
-			for g in range(len(Players)):
-				print(Players[g - 1].name + ' ' + str(Players[g - 1].id))
+			# print(curentQueue)
+			# print(Players[PlayersQueue[curentQueue - 1]].name)
+			# print(PlayersQueue)
+			# for g in range(len(Players)):
+			# 	print(Players[g - 1].name + ' ' + str(Players[g - 1].id))
 
 			lPlayer = Players[PlayersQueue[curentQueue-1]]
 			print(lPlayer.name + ' бросает кубик.')
@@ -369,13 +365,13 @@ while True:
 					name = command[1]
 					for i in range(len(Players)):
 						if Players[i-1].name == name:
-							ThisPlayer = list(reversed(Players))[i-1]
+							ThisPlayer = Players[i-1]
 					ThisPlayer.balance += add
 					print('Добавлено ' + str(add) + Game.coinsTransform(ThisPlayer.balance) + ' игроку ' + ThisPlayer.name)
 
 			s(0.5)
 			
-			cc()
+			#cc()
 
 
 WriteLogs()
