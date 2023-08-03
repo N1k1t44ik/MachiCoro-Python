@@ -7,8 +7,8 @@ import os
 from time import sleep as s
 import keyboard as key
 
-ver = ' Alpha 3'
-print('version :' + ver + '\n')
+ver = 'Alpha 3'
+print('version : ' + ver + '\n')
 
 logs = open('logs.txt', 'w')
 lt = ''
@@ -226,15 +226,18 @@ def changePlayer():
 	global PlayersQueue
 	global curentQueue
 	global count
+	global firstStep
 
-	playersIDs = []
-	for i in range(len(Players)):
-		playersIDs.append(Players[i-1].id)
-	PlayersQueue = []
-	for i in range(len(playersIDs)):
-		random_number = random.randint(0, len(playersIDs)-1)
-		PlayersQueue.append(playersIDs[random_number])
-		playersIDs.remove(playersIDs[random_number])
+	if firstStep:
+		playersIDs = []
+		for i in range(len(Players)):
+			playersIDs.append(Players[i-1].id)
+		PlayersQueue = []
+		for i in range(len(playersIDs)):
+			random_number = random.randint(0, len(playersIDs)-1)
+			PlayersQueue.append(playersIDs[random_number])
+			playersIDs.remove(playersIDs[random_number])
+		firstStep = False
 
 	curentQueue += 1
 	if curentQueue >= len(PlayersQueue):
@@ -300,7 +303,7 @@ while True:
 	for i in range(len(PlayersQueue)):
 
 		# Бросок кубика
-		CubeNum = Game.dropCube()
+		CubeNum = Game.dropCube('')
 
 		# Проверка является ли игрок ведущим
 		if Players[i-1].id == PlayersQueue[curentQueue-1]:
