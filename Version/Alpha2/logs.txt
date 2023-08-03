@@ -1,0 +1,7 @@
+
+Player content nefr 0 dots   --EnterPlayer
+Player content nefr 0 dots   --EnterPlayer
+Player content negr 1 dots   --EnterPlayer
+Player content nefr 0 dots   --EnterPlayer
+Player content negr 1 dots   --EnterPlayer
+Calculate first player: name:nefr id:0  --id

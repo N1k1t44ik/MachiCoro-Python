@@ -1,0 +1,67 @@
+
+Player content g 0 dots   --EnterPlayer
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+Player content g 0 dots   --EnterPlayer
+Player content h 1 dots   --EnterPlayer
+Calculate first player: name:g id:0  --id
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
+ --Card used-- Card: <card.Card object at 0x0000021552DAC1C0>
+ --Card used-- Card: <card.Card object at 0x0000021552DADC90>
