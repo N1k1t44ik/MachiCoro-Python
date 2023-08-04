@@ -102,13 +102,16 @@ class Game():
 					Card(cost=3, type='factory', color='green', num=8, gift=3, name=name, dNum=8, count=1))
 			if name == 'cheese factory':
 				player.cards.append(
-					Card(cost=5, type='factory', color='green', num=7, gift=5, name=name, dNum=7, count=1))
+					Card(cost=5, type='factory', color='green', num=7, gift=3, name=name, dNum=7, count=1))
 			if name == 'fruit market':
 				player.cards.append(
 					Card(cost=2, type='apple', color='green', num=11, gift=2, name=name, dNum=12, count=1))
+			if name == 'cafe':
+				player.cards.append(
+					Card(cost=2, type='cup', color='red', num=3, gift=1, name=name, dNum=3, count=1))
 			if name == 'supermarket':
 				player.sCards.append(
-					Card(cost=4, type='entertainment', color='special', num=0, gift=0, name=name, dNum=0, count=0))
+					Card(cost=10, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
 
 	def buyCard(Player, allowedCards):
 		global autodrop
@@ -119,24 +122,28 @@ class Game():
 			reversedAC = list(reversed(allowedCards))
 			if not cardnum == 1:
 				if not reversedAC[(cardnum - 1) * -1].type == 'special': Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
+				if reversedAC[(cardnum - 1) * -1].type == 'special': reversedAC[(cardnum - 1) * -1].count = 1
 				Player.balance -= reversedAC[(cardnum - 1) * -1].cost
 				cost = reversedAC[(cardnum - 1) * -1].cost
 				print('Игрок ' + Player.name + ' покупает ' + reversedAC[(cardnum - 1) * -1].name + ' и у него -' + str(
 					cost) + Game.coinsTransform(cost))
 			if cardnum == 1:
 				if not reversedAC[(cardnum - 1) * -1].type == 'special': Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
+				if reversedAC[(cardnum - 1) * -1].type == 'special': reversedAC[(cardnum - 1) * -1].count = 1
 				Player.balance -= allowedCards[(cardnum - 2)].cost
 				cost = allowedCards[(cardnum - 2)].cost
 				print('Игрок ' + Player.name + ' покупает ' + allowedCards[(cardnum - 2)].name + ' и у него -' + str(
 					cost) + Game.coinsTransform(cost))
 		# print(allowedCards[cardnum*-1].name + '  ' + str(cardnum))
 
-	def dropCube(type):
+	def dropCube(type, player):
 		CubeNum = 0
 		if not type == 'd':
 			CubeNum = ran.randint(1, 6)
+			player.cubeNum = CubeNum
 		else:
 			CubeNum = int(input())
+			player.cubeNum = CubeNum
 		return CubeNum
 
 	def arrayToString(massive):
@@ -163,6 +170,7 @@ def setupCards():
 	gameAddCard(3, 'factory', 'green', 8, 3, 'furniture factory', 8, 6)
 	gameAddCard(5, 'factory', 'green', 7, 3, 'cheese factory', 7, 6)
 	gameAddCard(2, 'factory', 'green', 11, 2, 'fruit market', 12, 6)
+	gameAddCard(2, 'cup', 'red', 3, 1, 'cafe', 3, 6)
 
 
 def enterPlayer():
@@ -279,6 +287,18 @@ def findCard(Player):
             if not addBalance == 0:
                 print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
 
+# TODO баг кр карты
+def findRedCard(cards):
+	global CubeNum
+	global oldCubeNum
+	global Players
+	global curentQueue
+	global PlayersQueue
+	if not CubeNum == oldCubeNum:
+		for i in range(len(cards)):
+			Card.RedFun(cards[i-1], curentQueue, PlayersQueue, Players, CubeNum)
+		wait = False
+
 def checkCard(name):
 	ret = True
 	for i in range(len(allowedCards)):
@@ -302,17 +322,20 @@ cc()
 changePlayer()
 
 k = 0
-
+oldCubeNum = 0
 
 while True:
 	for i in range(len(PlayersQueue)):
-
-		# Бросок кубика
-		#TODO баг с пустым экраном
-		CubeNum = Game.dropCube(DropCubeType)
-
+		oldCubeNum = CubeNum
 		# Проверка является ли игрок ведущим
 		if Players[i-1].id == PlayersQueue[curentQueue-1]:
+			findRedCard(Players[i-1].cards)
+
+			# Бросок кубика
+			# TODO баг с пустым экраном
+			CubeNum = Game.dropCube(DropCubeType, Players[i-1])
+
+
 			# print(curentQueue)
 			# print(Players[PlayersQueue[curentQueue - 1]].name)
 			# print(PlayersQueue)
@@ -333,10 +356,11 @@ while True:
 				if card.cost <= lPlayer.balance:
 					if checkCard(card.name):
 						allowedCards.append(card)
-				if j <= len(lPlayer.sCards):
-					if lPlayer.sCards[j-1].cost <= lPlayer.balance:
-						if checkCard(lPlayer.sCards[j-1].name):
-							allowedCards.append(lPlayer.sCards[j-1])
+				scards = lPlayer.sCards
+				if j <= len(scards):
+					if scards[j-1].cost <= lPlayer.balance:
+						if checkCard(scards[j-1].name):
+							allowedCards.append(scards[j-1])
 
 			# Отображение баланса,карт игрока / разрешённых карт / специальных карт
 			coins = Game.coinsTransform(lPlayer.balance)
