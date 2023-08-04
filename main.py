@@ -29,7 +29,7 @@ firstStep = True
 DropCubeType = 'd'
 
 class Game():
-	def field(cards, Interface):
+	def field(cards, Interface, player):
 		if Interface == 'Player':
 			for i in range(len(cards)):
 				if cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
@@ -41,6 +41,13 @@ class Game():
 		if Interface == 'Allowed':
 			for i in range(len(cards)):
 				print(str(i + 1) + ' ' + cards[i - 1].name + ' - ' + str(cards[i - 1].cost))
+		if Interface == 'Special':
+			scards = player.sCards
+			for i in range(len(scards)):
+				hasCard = 'not bought'
+				if scards[i-1].count >= 1:
+					hasCard = 'bought'
+				print('- ' + scards[i-1].name + ' - ' + hasCard)
 
 	def coinsTransform(count):
 		coinsText = ''
@@ -99,6 +106,9 @@ class Game():
 			if name == 'fruit market':
 				player.cards.append(
 					Card(cost=2, type='apple', color='green', num=11, gift=2, name=name, dNum=12, count=1))
+			if name == 'supermarket':
+				player.sCards.append(
+					Card(cost=4, type='entertainment', color='special', num=0, gift=0, name=name, dNum=0, count=0))
 
 	def buyCard(Player, allowedCards):
 		global autodrop
@@ -108,13 +118,13 @@ class Game():
 			cardnum = int(input('Введите номер карты: '))
 			reversedAC = list(reversed(allowedCards))
 			if not cardnum == 1:
-				Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
+				if not reversedAC[(cardnum - 1) * -1].type == 'special': Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
 				Player.balance -= reversedAC[(cardnum - 1) * -1].cost
 				cost = reversedAC[(cardnum - 1) * -1].cost
 				print('Игрок ' + Player.name + ' покупает ' + reversedAC[(cardnum - 1) * -1].name + ' и у него -' + str(
 					cost) + Game.coinsTransform(cost))
 			if cardnum == 1:
-				Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
+				if not reversedAC[(cardnum - 1) * -1].type == 'special': Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
 				Player.balance -= allowedCards[(cardnum - 2)].cost
 				cost = allowedCards[(cardnum - 2)].cost
 				print('Игрок ' + Player.name + ' покупает ' + allowedCards[(cardnum - 2)].name + ' и у него -' + str(
@@ -191,8 +201,9 @@ def enterPlayer():
 			name = input('Введите имя игрока: ')
 			Players.append(Player(3, false, ID, name))
 			LocalPlayer = Players[ID]
-			Game.addCard(LocalPlayer, 'wheat field', False)
-			Game.addCard(LocalPlayer, 'bakery', False)
+			Game.addCard(LocalPlayer, 'wheat field', 1)
+			Game.addCard(LocalPlayer, 'bakery', 1)
+			Game.addCard(LocalPlayer, 'supermarket', 0)
 			print('Игрок с именем: ' + name + ' и id: ' + str(ID) + ' был добавлен в игру!')
 			lt += '\nPlayer content ' + name + ' ' + str(ID) + ' dots   --EnterPlayer'
 			ids.append(ID)
@@ -253,20 +264,20 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO доделать
+#TODO добавить карты
 def findCard(Player):
-		global CubeNum
-		global Players
-		global lt
-		for i in range(len(Player.cards)):
-			Cards = Player.cards
-			if CubeNum >= Cards[i-1].num and CubeNum <= Cards[i-1].dNum:
-				lt += '\n --Card used-- Card: ' + str(Cards[i-1])
-				writeLogs()
-				addBalance = Card.CardFun(Players, Cards[i - 1], Player, curentQueue, PlayersQueue)
-				Player.balance += addBalance
-				if not addBalance == 0:
-					print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
+    global CubeNum
+    global Players
+    global lt
+    for i in range(len(Player.cards)):
+        Cards = Player.cards
+        if CubeNum >= Cards[i-1].num and CubeNum <= Cards[i-1].dNum:
+            lt += '\n --Card used-- Card: ' + str(Cards[i-1])
+            writeLogs()
+            addBalance = Card.CardFun(Players, Cards[i - 1], Player, curentQueue, PlayersQueue)
+            Player.balance += addBalance
+            if not addBalance == 0:
+                print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
 
 def checkCard(name):
 	ret = True
@@ -276,7 +287,7 @@ def checkCard(name):
 			ret = False
 	return ret
 
-# wheat cup enertainment pig gear clothes special factory apple
+# wheat cup entertainment pig gear clothes special factory apple
 
 #Players.append(Player(3, true))
 #Players.append(Player(6, false))
@@ -299,7 +310,6 @@ while True:
 		# Бросок кубика
 		#TODO баг с пустым экраном
 		CubeNum = Game.dropCube(DropCubeType)
-		print(CubeNum)
 
 		# Проверка является ли игрок ведущим
 		if Players[i-1].id == PlayersQueue[curentQueue-1]:
@@ -323,14 +333,20 @@ while True:
 				if card.cost <= lPlayer.balance:
 					if checkCard(card.name):
 						allowedCards.append(card)
+				if j <= len(lPlayer.sCards):
+					if lPlayer.sCards[j-1].cost <= lPlayer.balance:
+						if checkCard(lPlayer.sCards[j-1].name):
+							allowedCards.append(lPlayer.sCards[j-1])
 
-			# Отображение баланса,карт игрока / рахрешённых карт
+			# Отображение баланса,карт игрока / разрешённых карт / специальных карт
 			coins = Game.coinsTransform(lPlayer.balance)
 			print('Баланс игрока ' + lPlayer.name + ': ' + str(lPlayer.balance) + coins)
+			print('Специальные карты игрока: ')
+			Game.field(lPlayer.cards, 'Special', lPlayer)
 			print('Карты игрока: ')
-			Game.field(lPlayer.cards, 'Player')
+			Game.field(lPlayer.cards, 'Player', lPlayer)
 			print('\nКарты доступные для покупки:')
-			Game.field(allowedCards, 'Allowed')
+			Game.field(allowedCards, 'Allowed', lPlayer)
 
 			# Запуск покупки карты
 			Game.buyCard(lPlayer, allowedCards)

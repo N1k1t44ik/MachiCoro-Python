@@ -61,15 +61,15 @@ class Card():
 		multiplier = 0
 		Cards = player.cards
 		for i in range(len(Cards)):
-			if Cards[i - 1].type == type:
-				for g in range(card.count):
-					multiplier += 1 * Cards[i-1].count
+			if Cards[i - 1].type == type and not Cards[i-1].name == card.name:
+				multiplier += Cards[i - 1].count
 		balance = card.gift * card.count * multiplier
 		return balance
 
-	def green_standart(card, player):
+	def green_standart(card):
 		balance = 0
-
+		balance = card.gift * card.count
+		print(balance)
 		return balance
 
 	def CardFun(players, card, player, cq, pq):
@@ -86,34 +86,18 @@ class Card():
 		if cName == 'forest':
 			balance = Card.blue_standart(card, cq, lp, players)
 		if cName == 'farm':
-			for i in range(lp):
-				for i in range(lp):
-					if not player.step:
-						player.balance = players[i - 1].balance + (card.gift * card.count) - 1
-				balance = player.balance + (card.gift * card.count) - 1
+			balance = Card.blue_standart(card, cq, lp, players)
 
 		if cName == 'bakery':
-			balance = player.balance + (card.gift * card.count)
+			balance = Card.green_standart(card)
 		if cName == 'shop':
-			balance = player.balance + (card.gift * card.count)
+			balance = Card.green_standart(card)
 		if cName == 'furniture factory':
 			balance = Card.green_factory(card, player, 'gear')
 		if cName == 'cheese factory':
-			multiplier = 0
-			Cards = player.cards
-			for i in range(len(Cards)):
-				if Cards[i-1].type == 'pig':
-					for g in range(card.count):
-						multiplier += 1
-			balance = player.balance + (card.gift * card.count * multiplier)
+			balance = Card.green_factory(card, player, 'pig')
 		if cName == 'fruit market':
-			multiplier = 0
-			Cards = player.cards
-			for i in range(len(Cards)):
-				if Cards[i-1].type == 'wheat':
-					for g in range(card.count):
-						multiplier+=1
-			balance = player.balance + (card.gift * card.count * multiplier)
+			balance = Card.green_factory(card, player, 'wheat')
 		return balance
 
 

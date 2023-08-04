@@ -7,6 +7,7 @@ class Player():
 		self.step = step
 		self.id = id
 		self.name = name
+		self.sCards = []
 
 class Bot():
 	def __init__(self):
