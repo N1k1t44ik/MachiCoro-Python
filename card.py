@@ -88,23 +88,38 @@ class Card():
 				balance += card.count
 		return balance
 
-	def red(card, players, CubeNum):
-		modif = card.gift
-		AddBalance = []
-		droper = None
-		for i in range(len(players)):
-			if players[i-1].cubeNum == CubeNum:
-				droper = players[i-1]
-			else:
-				AddBalance.append(players[i-1])
-		for i in range(len(AddBalance)):
-			if droper.balance > 0:
-				AddBalance[i-1] += modif
-				droper.balance -= modif
-	def RedFun(card, currentID, queue, players, CubeNum):
-		cName = card.name
-		if cName == 'cafe':
-			Card.red(card, players, CubeNum)
+# TODO доделать красные карты
+	def red(Players, PlayersQueue, curentQueue, CubeNum):
+		curentPlayer = Players[PlayersQueue[curentQueue]]
+		for i in range(len(Players)):
+			print('red loop')
+			hasRedCard = False
+			modif = 0
+			Cards = curentPlayer.cards
+			for g in range(len(Cards)):
+				if Cards[g - 1].type == 'cup':
+					if CubeNum >= Cards[g - 1].num and CubeNum <= Cards[g - 1].dNum:
+						print('hasCard')
+						hasRedCard = True
+						modif = Cards[g - 1].gift
+						print(modif)
+			curentPlayerBalance = curentPlayer.balance
+
+			print(Players[i-1].name)
+			print(curentPlayer.name)
+			print(hasRedCard)
+			if not Players[i - 1] == curentPlayer and hasRedCard:
+				print('not')
+				if curentPlayerBalance >= modif:
+					Players[i - 1].balance += modif
+					print(Players[i-1].name + ' Получает ' + str(modif) + ' за счёт ' + curentPlayer.name)
+					curentPlayer.balance -= modif
+					print(curentPlayer.name + ' Теряет ' + str(modif) + ' отдав игроку ' + Players[i-1].name)
+				if curentPlayerBalance > 0 and curentPlayerBalance < modif:
+					Players[i - 1].balance += curentPlayerBalance
+					print(Players[i - 1].name + ' Получает ' + str(curentPlayerBalance) + ' за счёт ' + curentPlayer.name)
+					curentPlayer.balance -= curentPlayerBalance
+					print(curentPlayer.name + ' Теряет ' + str(curentPlayerBalance) + ' отдав игроку ' + Players[i - 1].name)
 
 	def CardFun(players, card, player, cq, pq):
 		balance = 0

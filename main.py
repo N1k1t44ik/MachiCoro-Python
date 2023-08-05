@@ -136,14 +136,12 @@ class Game():
 					cost) + Game.coinsTransform(cost))
 		# print(allowedCards[cardnum*-1].name + '  ' + str(cardnum))
 
-	def dropCube(type, player):
+	def dropCube(type):
 		CubeNum = 0
 		if not type == 'd':
 			CubeNum = ran.randint(1, 6)
-			player.cubeNum = CubeNum
 		else:
 			CubeNum = int(input())
-			player.cubeNum = CubeNum
 		return CubeNum
 
 	def arrayToString(massive):
@@ -202,7 +200,7 @@ def enterPlayer():
 		key.send('enter')
 		key.write('Пригожин Женя')
 		key.send('enter')
-		key.write('Ким-Чен-Ын')
+		key.write('Кирил Буданов')
 		key.send('enter')
 	if not count <= 1:
 		for i in range(count):
@@ -272,7 +270,7 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO добавить карты
+#TODO добавить все карты
 def findCard(Player):
     global CubeNum
     global Players
@@ -287,17 +285,9 @@ def findCard(Player):
             if not addBalance == 0:
                 print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
 
-# TODO баг кр карты
-def findRedCard(cards):
+def activateRedCard(Players, PlayersQueue, curentQueue):
 	global CubeNum
-	global oldCubeNum
-	global Players
-	global curentQueue
-	global PlayersQueue
-	if not CubeNum == oldCubeNum:
-		for i in range(len(cards)):
-			Card.RedFun(cards[i-1], curentQueue, PlayersQueue, Players, CubeNum)
-		wait = False
+	Card.red(Players, PlayersQueue, curentQueue, CubeNum)
 
 def checkCard(name):
 	ret = True
@@ -322,18 +312,14 @@ cc()
 changePlayer()
 
 k = 0
-oldCubeNum = 0
 
 while True:
 	for i in range(len(PlayersQueue)):
-		oldCubeNum = CubeNum
 		# Проверка является ли игрок ведущим
 		if Players[i-1].id == PlayersQueue[curentQueue-1]:
-			findRedCard(Players[i-1].cards)
 
 			# Бросок кубика
-			# TODO баг с пустым экраном
-			CubeNum = Game.dropCube(DropCubeType, Players[i-1])
+			CubeNum = Game.dropCube(DropCubeType)
 
 
 			# print(curentQueue)
@@ -347,6 +333,7 @@ while True:
 			print('Значение кубика: ' + str(CubeNum))
 
 			# Проверка карт игрока
+			activateRedCard(Players, PlayersQueue, curentQueue)
 			findCard(lPlayer)
 
 			# Создание списка с доступными для покупки картами

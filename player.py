@@ -8,7 +8,6 @@ class Player():
 		self.id = id
 		self.name = name
 		self.sCards = []
-		self.cubeNum = 0
 
 class Bot():
 	def __init__(self):
