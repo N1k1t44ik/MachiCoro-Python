@@ -87,7 +87,7 @@ class Game():
 			for i in range(len(player.cards)):
 				if player.cards[i - 1].name == name:
 					player.cards[i - 1].count += count
-
+		#TODO добавить расширенный режим alpha5
 		if not haveCard:
 			if name == 'wheat field':
 				player.cards.append(Card(cost=1, type='wheat', color='blue', num=1, gift=1, name=name, dNum=1, count=1))
@@ -287,7 +287,7 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO добавить фиолетовые карты
+#TODO добавить фиолетовые карты alpha4
 def findCard(Player):
     global CubeNum
     global Players
