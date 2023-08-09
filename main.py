@@ -66,6 +66,15 @@ class Game():
 
 		return coinsText
 
+	def gameRemoveCard(name):
+		global GameCards
+		for card in GameCards:
+			if card.name == name:
+				if card.count > 1:
+					card.count -= 1
+				else:
+					GameCards.remove(card)
+
 	def addCard(player, name, count):
 		haveCard = False
 
@@ -109,6 +118,9 @@ class Game():
 			if name == 'cafe':
 				player.cards.append(
 					Card(cost=2, type='cup', color='red', num=3, gift=1, name=name, dNum=3, count=1))
+			if name == 'restaurant':
+				player.cards.append(
+					Card(cost=3, type='cup', color='red', num=9, gift=2, name=name, dNum=10, count=1))
 			if name == 'supermarket':
 				player.sCards.append(
 					Card(cost=10, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
@@ -121,14 +133,18 @@ class Game():
 			cardnum = int(input('Введите номер карты: '))
 			reversedAC = list(reversed(allowedCards))
 			if not cardnum == 1:
-				if not reversedAC[(cardnum - 1) * -1].type == 'special': Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
+				if not reversedAC[(cardnum - 1) * -1].type == 'special':
+					Game.addCard(Player, reversedAC[(cardnum - 1) * -1].name, 1)
+					Game.gameRemoveCard(reversedAC[(cardnum - 1) * -1].name)
 				if reversedAC[(cardnum - 1) * -1].type == 'special': reversedAC[(cardnum - 1) * -1].count = 1
 				Player.balance -= reversedAC[(cardnum - 1) * -1].cost
 				cost = reversedAC[(cardnum - 1) * -1].cost
 				print('Игрок ' + Player.name + ' покупает ' + reversedAC[(cardnum - 1) * -1].name + ' и у него -' + str(
 					cost) + Game.coinsTransform(cost))
 			if cardnum == 1:
-				if not reversedAC[(cardnum - 1) * -1].type == 'special': Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
+				if not reversedAC[(cardnum - 1) * -1].type == 'special':
+					Game.addCard(Player, allowedCards[(cardnum - 2)].name, 1)
+					Game.gameRemoveCard(allowedCards[(cardnum - 2)].name)
 				if reversedAC[(cardnum - 1) * -1].type == 'special': reversedAC[(cardnum - 1) * -1].count = 1
 				Player.balance -= allowedCards[(cardnum - 2)].cost
 				cost = allowedCards[(cardnum - 2)].cost
@@ -169,6 +185,7 @@ def setupCards():
 	gameAddCard(5, 'factory', 'green', 7, 3, 'cheese factory', 7, 6)
 	gameAddCard(2, 'factory', 'green', 11, 2, 'fruit market', 12, 6)
 	gameAddCard(2, 'cup', 'red', 3, 1, 'cafe', 3, 6)
+	gameAddCard(3, 'cup', 'red', 9, 2, 'restaurant', 10, 6)
 
 
 def enterPlayer():
@@ -270,7 +287,7 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO добавить все карты
+#TODO добавить фиолетовые карты
 def findCard(Player):
     global CubeNum
     global Players
@@ -285,9 +302,9 @@ def findCard(Player):
             if not addBalance == 0:
                 print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
 
-def activateRedCard(Players, PlayersQueue, curentQueue):
+def activateRedCard(Players, Player):
 	global CubeNum
-	Card.red(Players, PlayersQueue, curentQueue, CubeNum)
+	Card.red(Players, Player, CubeNum)
 
 def checkCard(name):
 	ret = True
@@ -333,7 +350,7 @@ while True:
 			print('Значение кубика: ' + str(CubeNum))
 
 			# Проверка карт игрока
-			activateRedCard(Players, PlayersQueue, curentQueue)
+			activateRedCard(Players, lPlayer)
 			findCard(lPlayer)
 
 			# Создание списка с доступными для покупки картами

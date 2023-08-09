@@ -88,38 +88,29 @@ class Card():
 				balance += card.count
 		return balance
 
-# TODO доделать красные карты
-	def red(Players, PlayersQueue, curentQueue, CubeNum):
-		curentPlayer = Players[PlayersQueue[curentQueue]]
-		for i in range(len(Players)):
-			print('red loop')
-			hasRedCard = False
-			modif = 0
-			Cards = curentPlayer.cards
-			for g in range(len(Cards)):
-				if Cards[g - 1].type == 'cup':
-					if CubeNum >= Cards[g - 1].num and CubeNum <= Cards[g - 1].dNum:
-						print('hasCard')
-						hasRedCard = True
-						modif = Cards[g - 1].gift
-						print(modif)
-			curentPlayerBalance = curentPlayer.balance
+	def CheckCubeNum(CubeNum, card):
+		ret = False
+		if CubeNum >= card.num and CubeNum <= card.dNum:
+			ret = True
+		return ret
 
-			print(Players[i-1].name)
-			print(curentPlayer.name)
-			print(hasRedCard)
-			if not Players[i - 1] == curentPlayer and hasRedCard:
-				print('not')
-				if curentPlayerBalance >= modif:
-					Players[i - 1].balance += modif
-					print(Players[i-1].name + ' Получает ' + str(modif) + ' за счёт ' + curentPlayer.name)
-					curentPlayer.balance -= modif
-					print(curentPlayer.name + ' Теряет ' + str(modif) + ' отдав игроку ' + Players[i-1].name)
-				if curentPlayerBalance > 0 and curentPlayerBalance < modif:
-					Players[i - 1].balance += curentPlayerBalance
-					print(Players[i - 1].name + ' Получает ' + str(curentPlayerBalance) + ' за счёт ' + curentPlayer.name)
-					curentPlayer.balance -= curentPlayerBalance
-					print(curentPlayer.name + ' Теряет ' + str(curentPlayerBalance) + ' отдав игроку ' + Players[i - 1].name)
+	def red(Players, currentPlayer, CubeNum):
+		for player in Players:
+			if not player == currentPlayer:
+				for card in player.cards:
+					if Card.CheckCubeNum(CubeNum, card) and card.type == 'cup':
+						multiplier = 0
+						if Card.checkMarket(player):
+							multiplier = card.count
+						modif = card.gift + multiplier
+						if currentPlayer.balance >= modif:
+							player.balance += modif
+							currentPlayer.balance -= modif
+							print('Игрок ' + currentPlayer.name + ' отдаёт ' + str(modif) + ' игроку ' + player.name)
+						else:
+							player.balance += currentPlayer.balance
+							currentPlayer.balance -= currentPlayer.balance
+							print('Игрок ' + currentPlayer.name + ' отдаёт ' + str(currentPlayer.balance) + ' игроку ' + player.name)
 
 	def CardFun(players, card, player, cq, pq):
 		balance = 0
