@@ -7,7 +7,7 @@ import os
 from time import sleep as s
 import keyboard as key
 
-ver = 'Alpha 4'
+ver = 'Alpha 5'
 print('version : ' + ver + '\n')
 
 logs = open('logs.txt', 'w')
@@ -27,6 +27,7 @@ Range = 0
 firstDrop = True
 firstStep = True
 DropCubeType = 'd'
+cubeChange = [0, 0]
 
 class Game():
 	def translate(word):
@@ -66,9 +67,9 @@ class Game():
 		if Interface == 'Special':
 			scards = player.sCards
 			for i in range(len(scards)):
-				hasCard = 'not bought'
+				hasCard = Game.translate('not bought')
 				if scards[i-1].count >= 1:
-					hasCard = 'bought'
+					hasCard = Game.translate('bought')
 				print('- ' + Game.translate(scards[i-1].name) + ' - ' + hasCard)
 
 	def coinsTransform(count):
@@ -153,10 +154,19 @@ class Game():
 				player.cards.append(
 					Card(cost=8, type='entertainment', color='purple', num=6, gift=0, name=name, dNum=6, count=1))
 
+			if name == 'railway':
+				player.sCards.append(
+					Card(cost=4, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
 			if name == 'supermarket':
 				player.sCards.append(
 					Card(cost=10, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
-#TODO добавить все специальные карты alpha6
+			if name == 'entertainment park':
+				player.sCards.append(
+					Card(cost=16, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
+			if name == 'radio tower':
+				player.sCards.append(
+					Card(cost=22, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
+
 	def buyCard(Player, allowedCards):
 		global autodrop
 		ans = input('\nВыберите действие:\n1 - купить карту\n2 - пропустить ход\n')
@@ -171,7 +181,7 @@ class Game():
 				if reversedAC[(cardnum - 1) * -1].type == 'special': reversedAC[(cardnum - 1) * -1].count = 1
 				Player.balance -= reversedAC[(cardnum - 1) * -1].cost
 				cost = reversedAC[(cardnum - 1) * -1].cost
-				print('Игрок ' + Player.name + ' покупает ' + reversedAC[(cardnum - 1) * -1].name + ' и у него -' + str(
+				print('Игрок ' + Player.name + ' покупает ' + Game.translate(reversedAC[(cardnum - 1) * -1].name) + ' и у него -' + str(
 					cost) + Game.coinsTransform(cost))
 			if cardnum == 1:
 				if not reversedAC[(cardnum - 1) * -1].type == 'special':
@@ -180,21 +190,64 @@ class Game():
 				if reversedAC[(cardnum - 1) * -1].type == 'special': reversedAC[(cardnum - 1) * -1].count = 1
 				Player.balance -= allowedCards[(cardnum - 2)].cost
 				cost = allowedCards[(cardnum - 2)].cost
-				print('Игрок ' + Player.name + ' покупает ' + allowedCards[(cardnum - 2)].name + ' и у него -' + str(
+				print('Игрок ' + Player.name + ' покупает ' + Game.translate(allowedCards[(cardnum - 2)].name) + ' и у него -' + str(
 					cost) + Game.coinsTransform(cost))
 		# print(allowedCards[cardnum*-1].name + '  ' + str(cardnum))
 
-	def dropCube(type):
+	def checkRailway(player):
+		hasCard = False
+		for card in player.sCards:
+			if card.name == 'railway' and card.count >= 1:
+				hasCard = True
+		return hasCard
+	def checkEntertainmentPark(player):
+		hasCard = False
+		for card in player.sCards:
+			if card.name == 'entertainment park' and card.count >= 1:
+				hasCard = True
+		return hasCard
+
+	def checkRadioTower(player):
+		hasCard = False
+		for card in player.sCards:
+			if card.name == 'radio tower' and card.count >= 1:
+				hasCard = True
+		return hasCard
+
+	def dropCube(type, player):
+		def cube():
+			global cubeChange
+			CubeNum = 0
+			cubeChange = [0, 0]
+			if not type == 'd':
+				CubeNum = ran.randint(1, 6)
+			else:
+				CubeNum = int(input('='))
+			cubeChange[0] = CubeNum
+			if Game.checkRailway(player):
+				ans = int(input('Хотите бросить второй кубик?\n1 да\n2 нет\n'))
+				if ans == 1:
+					if not type == 'd':
+						new = ran.randint(1, 6)
+						CubeNum += new
+						cubeChange[1] = new
+					else:
+						new = int(input('+'))
+						CubeNum += new
+						cubeChange[1] = new
+			return CubeNum
+
 		CubeNum = 0
-		if not type == 'd':
-			CubeNum = ran.randint(1, 6)
-		else:
-			CubeNum = int(input())
+		CubeNum = cube()
+		if Game.checkRadioTower(player):
+			ans = int(input('Хотите перебросить кубики?\n1 да\n2 нет'))
+			if ans == 1:
+				CubeNum = cube()
 		return CubeNum
 
-	def arrayToString(massive):
+	def arrayToString(array):
 		ret = ''
-		ret = str(massive).replace('[', '').replace(']', '').replace(',', '')
+		ret = str(array).replace('[', '').replace(']', '').replace(',', '')
 		return ret
 
 def cc():
@@ -221,6 +274,7 @@ def setupCards():
 	gameAddCard(6, 'entertainment', 'purple', 6, 2, 'stadium', 6, 5)
 	gameAddCard(7, 'entertainment', 'purple', 6, 5, 'TV center', 6, 5)
 	gameAddCard(8, 'entertainment', 'purple', 6, 0, 'business center', 6, 5)
+
 
 
 def enterPlayer():
@@ -261,7 +315,12 @@ def enterPlayer():
 			LocalPlayer = Players[ID]
 			Game.addCard(LocalPlayer, 'wheat field', 1)
 			Game.addCard(LocalPlayer, 'bakery', 1)
+
+			Game.addCard(LocalPlayer, 'railway', 0)
 			Game.addCard(LocalPlayer, 'supermarket', 0)
+			Game.addCard(LocalPlayer, 'entertainment park', 0)
+			Game.addCard(LocalPlayer, 'radio tower', 0)
+
 			print('Игрок с именем: ' + name + ' и id: ' + str(ID) + ' был добавлен в игру!')
 			lt += '\nPlayer content ' + name + ' ' + str(ID) + ' dots   --EnterPlayer'
 			ids.append(ID)
@@ -322,7 +381,7 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO добавить фиолетовые карты alpha4
+#TODO добавить расширенные карты alpha6
 def findCard(Player):
 	global CubeNum
 	global Players
@@ -371,17 +430,11 @@ while True:
 		# Проверка является ли игрок ведущим
 		if Players[i-1].id == PlayersQueue[curentQueue-1]:
 
-			# Бросок кубика
-			CubeNum = Game.dropCube(DropCubeType)
-
-
-			# print(curentQueue)
-			# print(Players[PlayersQueue[curentQueue - 1]].name)
-			# print(PlayersQueue)
-			# for g in range(len(Players)):
-			# 	print(Players[g - 1].name + ' ' + str(Players[g - 1].id))
 
 			lPlayer = Players[PlayersQueue[curentQueue-1]]
+			# Бросок кубика
+			CubeNum = Game.dropCube(DropCubeType, lPlayer)
+
 			print(lPlayer.name + ' бросает кубик.')
 			print('Значение кубика: ' + str(CubeNum))
 
@@ -411,11 +464,14 @@ while True:
 			print('\nКарты доступные для покупки:')
 			Game.field(allowedCards, 'Allowed', lPlayer)
 
+
 			# Запуск покупки карты
 			Game.buyCard(lPlayer, allowedCards)
 			# Смена игрока
-			changePlayer()
-
+			if not Game.checkEntertainmentPark(lPlayer) or not cubeChange[0] == cubeChange[1]:
+				changePlayer()
+			else:
+				print('Ещё один бросок!')
 
 			command = ''
 			if not autodrop: command = input('команда: ')
@@ -447,10 +503,9 @@ while True:
 							ThisPlayer = Players[i-1]
 					ThisPlayer.balance += add
 					print('Добавлено ' + str(add) + Game.coinsTransform(ThisPlayer.balance) + ' игроку ' + ThisPlayer.name)
-
 			s(0.5)
 			
-			#cc()
+			cc()
 
 
 WriteLogs()

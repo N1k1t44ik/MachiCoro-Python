@@ -1,0 +1,10 @@
+
+Player content pop 0 dots   --EnterPlayer
+Player content pop 0 dots   --EnterPlayer
+Player content lol 1 dots   --EnterPlayer
+Player content pop 0 dots   --EnterPlayer
+Player content lol 1 dots   --EnterPlayer
+Calculate first player: name:pop id:0  --id
+Player content pop 0 dots   --EnterPlayer
+Player content lol 1 dots   --EnterPlayer
+Calculate first player: name:pop id:0  --id

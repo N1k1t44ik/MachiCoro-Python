@@ -14,3 +14,5 @@ stadium_стадион
 TV center_телецентр
 business center_деловой центр
 supermarket_торговый центр
+not bought_не куплено
+bought_куплено
