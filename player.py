@@ -9,7 +9,7 @@ class Player():
 		self.name = name
 		self.sCards = []
 
-#TODO добавить ботов alpha6 - beta1
+#TODO добавить ботов beta1
 class Bot():
 	def __init__(self):
 		names = ['Джо', 'Мики', 'Питер', 'Ники', 'Мэй', 'Лекстер', 'Доктор Абоба', 'Михаил', 'Маэстро', 'Глеб', 'Василёчек']

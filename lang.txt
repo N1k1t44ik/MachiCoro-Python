@@ -1,0 +1,16 @@
+wheat field_пшеничное поле
+bakery_пекарня
+apple garden_яблоневый сад
+mine_шахта
+forest_лес
+farm_ферма
+shop_магазин
+furniture factory_мебельная фабрика
+cheese factory_сыроварня
+fruit market_фруктовый рынок
+cafe_кафе
+restaurant_ресторан
+stadium_стадион
+TV center_телецентр
+business center_деловой центр
+supermarket_торговый центр

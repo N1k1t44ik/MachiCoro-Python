@@ -29,25 +29,47 @@ firstStep = True
 DropCubeType = 'd'
 
 class Game():
+	def translate(word):
+		global lt
+		translatedWord = ''
+		cof = 0
+
+		if not os.path.isfile('lang.txt'):
+			file = open('lang.txt', 'w')
+			file.close()
+		translates = open('lang.txt', encoding='utf-8').readlines()
+		if len(translates) == 0:
+			lt += '\n--translate error!'
+			writeLogs()
+			translatedWord = word
+		for line in translates:
+			words = line.split('_')
+			if words[0] == word:
+				translatedWord = words[1]
+				cof+=1
+		if cof == 0:
+			translatedWord = word
+
+		return translatedWord.replace('\n', '')
 	def field(cards, Interface, player):
 		if Interface == 'Player':
 			for i in range(len(cards)):
 				if cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
-					print('- ' + cards[(i - 1) * -1].name + '(' + str(cards[(i - 1) * -1].num) + ') x' + str(
+					print('- ' + Game.translate(cards[(i - 1) * -1].name) + '(' + str(cards[(i - 1) * -1].num) + ') x' + str(
 						cards[(i - 1) * -1].count))
 				if not cards[(i - 1) * -1].num == cards[(i - 1) * -1].dNum:
-					print('- ' + cards[(i - 1) * -1].name + '(' + str(cards[(i - 1) * -1].num) + '-' + str(
+					print('- ' + Game.translate(cards[(i - 1) * -1].name) + '(' + str(cards[(i - 1) * -1].num) + '-' + str(
 						cards[(i - 1) * -1].dNum) + ') x' + str(cards[(i - 1) * -1].count))
 		if Interface == 'Allowed':
 			for i in range(len(cards)):
-				print(str(i + 1) + ' ' + cards[i - 1].name + ' - ' + str(cards[i - 1].cost))
+				print(str(i + 1) + ' ' + Game.translate(cards[i - 1].name) + ' - ' + str(cards[i - 1].cost))
 		if Interface == 'Special':
 			scards = player.sCards
 			for i in range(len(scards)):
 				hasCard = 'not bought'
 				if scards[i-1].count >= 1:
 					hasCard = 'bought'
-				print('- ' + scards[i-1].name + ' - ' + hasCard)
+				print('- ' + Game.translate(scards[i-1].name) + ' - ' + hasCard)
 
 	def coinsTransform(count):
 		coinsText = ''
@@ -87,7 +109,7 @@ class Game():
 			for i in range(len(player.cards)):
 				if player.cards[i - 1].name == name:
 					player.cards[i - 1].count += count
-		#TODO добавить расширенный режим alpha5
+
 		if not haveCard:
 			if name == 'wheat field':
 				player.cards.append(Card(cost=1, type='wheat', color='blue', num=1, gift=1, name=name, dNum=1, count=1))
@@ -121,10 +143,20 @@ class Game():
 			if name == 'restaurant':
 				player.cards.append(
 					Card(cost=3, type='cup', color='red', num=9, gift=2, name=name, dNum=10, count=1))
+			if name == 'stadium':
+				player.cards.append(
+					Card(cost=6, type='entertainment', color='purple', num=6, gift=2, name=name, dNum=6, count=1))
+			if name == 'TV center':
+				player.cards.append(
+					Card(cost=7, type='entertainment', color='purple', num=6, gift=5, name=name, dNum=6, count=1))
+			if name == 'business center':
+				player.cards.append(
+					Card(cost=8, type='entertainment', color='purple', num=6, gift=0, name=name, dNum=6, count=1))
+
 			if name == 'supermarket':
 				player.sCards.append(
 					Card(cost=10, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
-
+#TODO добавить все специальные карты alpha6
 	def buyCard(Player, allowedCards):
 		global autodrop
 		ans = input('\nВыберите действие:\n1 - купить карту\n2 - пропустить ход\n')
@@ -186,6 +218,9 @@ def setupCards():
 	gameAddCard(2, 'factory', 'green', 11, 2, 'fruit market', 12, 6)
 	gameAddCard(2, 'cup', 'red', 3, 1, 'cafe', 3, 6)
 	gameAddCard(3, 'cup', 'red', 9, 2, 'restaurant', 10, 6)
+	gameAddCard(6, 'entertainment', 'purple', 6, 2, 'stadium', 6, 5)
+	gameAddCard(7, 'entertainment', 'purple', 6, 5, 'TV center', 6, 5)
+	gameAddCard(8, 'entertainment', 'purple', 6, 0, 'business center', 6, 5)
 
 
 def enterPlayer():
@@ -289,22 +324,23 @@ def changePlayer():
 
 #TODO добавить фиолетовые карты alpha4
 def findCard(Player):
-    global CubeNum
-    global Players
-    global lt
-    for i in range(len(Player.cards)):
-        Cards = Player.cards
-        if CubeNum >= Cards[i-1].num and CubeNum <= Cards[i-1].dNum:
-            lt += '\n --Card used-- Card: ' + str(Cards[i-1])
-            writeLogs()
-            addBalance = Card.CardFun(Players, Cards[i - 1], Player, curentQueue, PlayersQueue)
-            Player.balance += addBalance
-            if not addBalance == 0:
-                print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
-
-def activateRedCard(Players, Player):
 	global CubeNum
+	global Players
+	global lt
 	Card.red(Players, Player, CubeNum)
+	Card.stadium(Players, Player, CubeNum)
+	Card.tvcenter(Players, Player, CubeNum)
+	Card.businesscenter(Players, Player, CubeNum)
+
+	for i in range(len(Player.cards)):
+		Cards = Player.cards
+		if CubeNum >= Cards[i-1].num and CubeNum <= Cards[i-1].dNum:
+			lt += '\n --Card used-- Card: ' + str(Cards[i-1])
+			writeLogs()
+			addBalance = Card.CardFun(Players, Cards[i - 1], Player, curentQueue, PlayersQueue)
+			Player.balance += addBalance
+			if not addBalance == 0:
+				print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))
 
 def checkCard(name):
 	ret = True
@@ -350,7 +386,6 @@ while True:
 			print('Значение кубика: ' + str(CubeNum))
 
 			# Проверка карт игрока
-			activateRedCard(Players, lPlayer)
 			findCard(lPlayer)
 
 			# Создание списка с доступными для покупки картами
