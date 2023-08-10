@@ -1,3 +1,5 @@
+import random
+
 
 class Card():
 	"""docstring for ClassName"""
@@ -37,7 +39,25 @@ class Card():
 					hasMarket = True
 		return hasMarket
 
-	def blue_standart(card, cq, lp, players):
+	def trauler(Players, CubeNum):
+		for player in Players:
+			hasPort = False
+			for sCard in player.sCards:
+				if sCard.name == 'port':
+					hasPort = True
+			hasRailway = False
+			for sCard in player.sCards:
+				if sCard.name == 'railway':
+					hasRailway = True
+			for card in player.cards:
+				if card.name == 'trauler' and Card.checkCubeNum(CubeNum, card) and hasPort:
+					Num = random.randint(1, 6)
+					if hasRailway:
+						Num += random.randint(1, 6)
+					player.balance += Num
+
+
+	def blue_standart(card, cq, lp, players, arg):
 		balance = 0
 		for i in range(lp):
 			if not players[i-1].id == cq:
@@ -51,6 +71,16 @@ class Card():
 					players[i-1].balance += pCard.gift * pCard.count
 			else:
 				balance = card.gift * card.count
+
+			if not arg == '':
+				hasArg = False
+				for sCard in players[i-1].sCards:
+					if sCard.name == arg:
+						if sCard.count >= 1:
+							hasArg = True
+				if not hasArg:
+					balance = 0
+		#print(balance)
 		return balance
 
 	def blue_factory(card, cq, lp, players, type, player, pq):
@@ -98,6 +128,19 @@ class Card():
 		Cards = player.cards
 		for i in range(len(Cards)):
 			if Cards[i - 1].type == type and not Cards[i-1].name == card.name:
+				multiplier += Cards[i - 1].count
+		balance = card.gift * card.count * multiplier
+		if card.type == 'clothes':
+			if Card.checkMarket(player):
+				balance += card.count
+		return balance
+	def green_factory2(card, player, name, players):
+		lp = len(players)
+		balance = 0
+		multiplier = 0
+		Cards = player.cards
+		for i in range(len(Cards)):
+			if Cards[i - 1].name == name and not Cards[i-1].name == card.name:
 				multiplier += Cards[i - 1].count
 		balance = card.gift * card.count * multiplier
 		if card.type == 'clothes':
@@ -166,6 +209,30 @@ class Card():
 							player.balance += currentPlayer.balance
 							currentPlayer.balance -= currentPlayer.balance
 							print('Игрок ' + currentPlayer.name + ' отдаёт ' + str(currentPlayer.balance) + ' игроку ' + player.name)
+	def susibar(Players, currentPlayer, CubeNum):
+		for player in Players:
+			if not player == currentPlayer:
+				for card in player.cards:
+					if Card.checkCubeNum(CubeNum, card) and card.name == 'susi bar':
+						multiplier = 0
+						if Card.checkMarket(player):
+							multiplier = card.count
+						modif = card.gift + multiplier
+						hasArg = False
+						for sCard in currentPlayer.sCards:
+							if sCard.name == 'port':
+								if sCard.count >= 1:
+									hasArg = True
+						if not hasArg:
+							modif = 0
+						if currentPlayer.balance >= modif:
+							player.balance += modif
+							currentPlayer.balance -= modif
+							if not modif > 0: print('Игрок ' + currentPlayer.name + ' отдаёт ' + str(modif) + ' игроку ' + player.name)
+						else:
+							player.balance += currentPlayer.balance
+							currentPlayer.balance -= currentPlayer.balance
+							if not modif > 0: print('Игрок ' + currentPlayer.name + ' отдаёт ' + str(currentPlayer.balance) + ' игроку ' + player.name)
 	def stadium(Players, currentPlayer, CubeNum):
 		for player in Players:
 			if not player == currentPlayer:
@@ -247,15 +314,21 @@ class Card():
 		lp = len(players)
 
 		if cName == 'wheat field':
-			balance = Card.blue_standart(card, cq, lp, players)
+			balance = Card.blue_standart(card, cq, lp, players, '')
 		if cName == 'apple garden':
 			balance	 = Card.blue_factory(card, cq, lp, players, 'wheat', player, pq)
 		if cName == 'mine':
-			balance = Card.blue_standart(card, players, players)
+			balance = Card.blue_standart(card, players, players, '')
 		if cName == 'forest':
-			balance = Card.blue_standart(card, cq, lp, players)
+			balance = Card.blue_standart(card, cq, lp, players, '')
 		if cName == 'farm':
-			balance = Card.blue_standart(card, cq, lp, players)
+			balance = Card.blue_standart(card, cq, lp, players, '')
+
+		if cName == 'flower garden':
+			balance = Card.blue_standart(card, cq, lp, players, '')
+		if cName == 'longboat':
+			balance = Card.blue_standart(card, cq, lp, players, 'port')
+
 
 		if cName == 'bakery':
 			balance = Card.green_standart(card, players, player)
@@ -267,6 +340,11 @@ class Card():
 			balance = Card.green_factory(card, player, 'pig', players)
 		if cName == 'fruit market':
 			balance = Card.green_factory(card, player, 'wheat', players)
+
+		if cName == 'flower shop':
+			balance = Card.green_factory2(card, player, 'flower garden', players)
+		if cName == 'food storage':
+			balance = Card.green_factory(card, player, 'cup', players)
 
 
 		return balance

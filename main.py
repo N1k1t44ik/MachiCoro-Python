@@ -10,6 +10,8 @@ import keyboard as key
 ver = 'Alpha 5'
 print('version : ' + ver + '\n')
 
+mode = int(input('Выберите режим:\n1 Обычный\n2 Расширенный(Not Completed!)\n'))
+
 logs = open('logs.txt', 'w')
 lt = ''
 count = 0
@@ -167,6 +169,29 @@ class Game():
 				player.sCards.append(
 					Card(cost=22, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
 
+			if name == 'port':
+				player.sCards.append(
+					Card(cost=2, type='special', color='gray', num=0, gift=0, name=name, dNum=0, count=0))
+
+			if name == 'flower garden':
+				player.cards.append(
+					Card(cost=2, type='wheat', color='blue', num=4, gift=1, name=name, dNum=4, count=1))
+			if name == 'longboat':
+				player.cards.append(
+					Card(cost=2, type='ship', color='blue', num=8, gift=3, name=name, dNum=8, count=1))
+			if name == 'trauler':
+				player.cards.append(
+					Card(cost=5, type='ship', color='blue', num=12, gift=0, name=name, dNum=14, count=1))
+			if name == 'flower shop':
+				player.cards.append(
+					Card(cost=1, type='clothes', color='green', num=6, gift=1, name=name, dNum=6, count=1))
+			if name == 'food storage':
+				player.cards.append(
+					Card(cost=2, type='factory', color='green', num=12, gift=2, name=name, dNum=13, count=1))
+			if name == 'susi bar':
+				player.cards.append(
+					Card(cost=2, type='cup', color='red', num=1, gift=3, name=name, dNum=1, count=1))
+
 	def buyCard(Player, allowedCards):
 		global autodrop
 		ans = input('\nВыберите действие:\n1 - купить карту\n2 - пропустить ход\n')
@@ -214,6 +239,13 @@ class Game():
 				hasCard = True
 		return hasCard
 
+	def checkPort(player):
+		hasCard = False
+		for card in player.sCards:
+			if card.name == 'port' and card.count >= 1:
+				hasCard = True
+		return hasCard
+
 	def dropCube(type, player):
 		def cube():
 			global cubeChange
@@ -235,6 +267,10 @@ class Game():
 						new = int(input('+'))
 						CubeNum += new
 						cubeChange[1] = new
+			if Game.checkPort(player) and CubeNum >= 10:
+				ans = int(input('Хотите добавить 2 к результату броска ' + str(CubeNum) + '?\n1 да\n2 нет\n'))
+				if ans == 1:
+					CubeNum += 2
 			return CubeNum
 
 		CubeNum = 0
@@ -259,6 +295,7 @@ def writeLogs():
 	logs.write(lt)
 
 def setupCards():
+	global  mode
 	gameAddCard(1, 'wheat', 'blue', 1, 1, 'wheat field', 1, 11)
 	gameAddCard(1, 'clothes', 'green', 2, 1, 'bakery', 3, 11)
 	gameAddCard(3, 'wheat', 'blue', 10, 3, 'apple garden', 10, 6)
@@ -275,6 +312,14 @@ def setupCards():
 	gameAddCard(7, 'entertainment', 'purple', 6, 5, 'TV center', 6, 5)
 	gameAddCard(8, 'entertainment', 'purple', 6, 0, 'business center', 6, 5)
 
+	if mode == 2:
+		gameAddCard(2, 'wheat', 'blue', 4, 1, 'flower garden', 4, 6)
+		gameAddCard(2, 'boat', 'blue', 8, 3, 'longboat', 8, 6)
+		gameAddCard(5, 'boat', 'blue', 12, 0, 'trauler', 14, 6)
+		gameAddCard(1, 'clothes', 'green', 6, 1, 'flower shop', 6, 6)
+		gameAddCard(2, 'clothes', 'green', 12, 2, 'food storage', 13, 6)
+		gameAddCard(2, 'cup', 'red', 1, 3, 'susi bar', 1, 6)
+
 
 
 def enterPlayer():
@@ -282,6 +327,7 @@ def enterPlayer():
 	global lt
 	global count
 	global winid
+	global mode
 	ids = []
 	count = int(input('Кол-во игроков: '))
 	if str(count) == '-1':
@@ -320,6 +366,9 @@ def enterPlayer():
 			Game.addCard(LocalPlayer, 'supermarket', 0)
 			Game.addCard(LocalPlayer, 'entertainment park', 0)
 			Game.addCard(LocalPlayer, 'radio tower', 0)
+
+			if mode == 2:
+				Game.addCard(LocalPlayer, 'port', 0)
 
 			print('Игрок с именем: ' + name + ' и id: ' + str(ID) + ' был добавлен в игру!')
 			lt += '\nPlayer content ' + name + ' ' + str(ID) + ' dots   --EnterPlayer'
@@ -381,7 +430,7 @@ def changePlayer():
 	# 	if Players[i-1].id == PlayersQueue[curentQueue-1]:
 	# 		Players[i-1].step = True
 
-#TODO добавить расширенные карты alpha6
+#TODO доделать расширенные карты alpha6
 def findCard(Player):
 	global CubeNum
 	global Players
@@ -390,6 +439,9 @@ def findCard(Player):
 	Card.stadium(Players, Player, CubeNum)
 	Card.tvcenter(Players, Player, CubeNum)
 	Card.businesscenter(Players, Player, CubeNum)
+	if mode == 2:
+		Card.trauler(Players, CubeNum)
+		Card.susibar(Players, Player, CubeNum)
 
 	for i in range(len(Player.cards)):
 		Cards = Player.cards
@@ -397,6 +449,7 @@ def findCard(Player):
 			lt += '\n --Card used-- Card: ' + str(Cards[i-1])
 			writeLogs()
 			addBalance = Card.CardFun(Players, Cards[i - 1], Player, curentQueue, PlayersQueue)
+			#print(addBalance)
 			Player.balance += addBalance
 			if not addBalance == 0:
 				print('Игрок ' + Player.name + ' получает ' + str(addBalance) + Game.coinsTransform((addBalance)))

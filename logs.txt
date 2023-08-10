@@ -8,3 +8,22 @@ Calculate first player: name:pop id:0  --id
 Player content pop 0 dots   --EnterPlayer
 Player content lol 1 dots   --EnterPlayer
 Calculate first player: name:pop id:0  --id
+ --Card used-- Card: <card.Card object at 0x000001C4DE6616D0>
+Player content pop 0 dots   --EnterPlayer
+Player content lol 1 dots   --EnterPlayer
+Calculate first player: name:pop id:0  --id
+ --Card used-- Card: <card.Card object at 0x000001C4DE6616D0>
+ --Card used-- Card: <card.Card object at 0x000001C4DDC27410>
+Player content pop 0 dots   --EnterPlayer
+Player content lol 1 dots   --EnterPlayer
+Calculate first player: name:pop id:0  --id
+ --Card used-- Card: <card.Card object at 0x000001C4DE6616D0>
+ --Card used-- Card: <card.Card object at 0x000001C4DDC27410>
+ --Card used-- Card: <card.Card object at 0x000001C4DE6616D0>
+Player content pop 0 dots   --EnterPlayer
+Player content lol 1 dots   --EnterPlayer
+Calculate first player: name:pop id:0  --id
+ --Card used-- Card: <card.Card object at 0x000001C4DE6616D0>
+ --Card used-- Card: <card.Card object at 0x000001C4DDC27410>
+ --Card used-- Card: <card.Card object at 0x000001C4DE6616D0>
+ --Card used-- Card: <card.Card object at 0x000001C4DDC27410>
